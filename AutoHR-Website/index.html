@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoHR | Smart Leave Automation</title>
 
-    <link rel="stylesheet" href="assets/css/style.css">
-
     <style>
         * {
             margin: 0;
@@ -16,29 +14,32 @@
         }
 
         body {
-            background: linear-gradient(120deg, #0f172a, #1e293b);
+            background: radial-gradient(circle at top, #1e293b, #020617);
             color: #ffffff;
+            min-height: 100vh;
         }
 
-        /* Navbar */
+        /* ================= NAVBAR ================= */
         header {
-            padding: 20px 60px;
+            padding: 18px 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
         header h1 {
-            font-size: 26px;
             color: #38bdf8;
+            font-size: 26px;
+            cursor: pointer;
         }
 
         nav a {
             color: #ffffff;
             text-decoration: none;
-            margin-left: 25px;
+            margin-left: 28px;
+            font-size: 15px;
             font-weight: 500;
             transition: 0.3s;
         }
@@ -47,158 +48,102 @@
             color: #38bdf8;
         }
 
-        /* Hero Section */
+        /* ================= HERO ================= */
         .hero {
-            min-height: 90vh;
+            min-height: calc(100vh - 80px);
             display: flex;
-            align-items: center;
             justify-content: center;
-            text-align: center;
+            align-items: center;
             padding: 40px;
         }
 
-        .hero-box {
-            max-width: 700px;
+        .hero-card {
+            max-width: 720px;
             background: rgba(255, 255, 255, 0.08);
-            padding: 60px 40px;
-            border-radius: 20px;
+            padding: 60px 50px;
+            border-radius: 22px;
+            text-align: center;
             backdrop-filter: blur(12px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
         }
 
-        .hero-box h2 {
+        .hero-card h2 {
             font-size: 42px;
+            line-height: 1.3;
             margin-bottom: 15px;
         }
 
-        .hero-box span {
+        .hero-card h2 span {
             color: #38bdf8;
         }
 
-        .hero-box p {
-            font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 30px;
+        .hero-card p {
+            font-size: 17px;
+            line-height: 1.7;
             color: #e5e7eb;
+            margin-bottom: 35px;
         }
 
-        .hero-box a {
+        .hero-card a {
             display: inline-block;
-            padding: 14px 35px;
+            padding: 14px 40px;
             background: linear-gradient(to right, #38bdf8, #0ea5e9);
-            color: #0f172a;
+            color: #020617;
             border-radius: 30px;
+            font-size: 16px;
             font-weight: bold;
             text-decoration: none;
             transition: 0.3s;
         }
 
-        .hero-box a:hover {
-            transform: scale(1.05);
+        .hero-card a:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 20px rgba(56,189,248,0.6);
         }
 
-        /* Features */
-        .features {
-            padding: 80px 60px;
-            background: #020617;
-        }
-
-        .features h3 {
-            text-align: center;
-            font-size: 32px;
-            margin-bottom: 50px;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.06);
-            padding: 30px;
-            border-radius: 16px;
-            transition: 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: #38bdf8;
-        }
-
-        .card h4 {
-            margin-bottom: 10px;
-            color: #38bdf8;
-        }
-
-        .card p {
-            color: #d1d5db;
-            line-height: 1.5;
-        }
-
-        /* Footer */
+        /* ================= FOOTER ================= */
         footer {
-            padding: 20px;
             text-align: center;
-            background: #020617;
+            padding: 18px;
             color: #94a3b8;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
+    <!-- NAVBAR -->
     <header>
-        <h1>AutoHR</h1>
+        <h1 onclick="location.href='index.html'">AutoHR</h1>
         <nav>
-            <a href="index.html">Home</a>
+            <a href="home.html">Home</a>
             <a href="login.html">Login</a>
             <a href="apply-leave.html">Apply Leave</a>
             <a href="reports.html">Reports</a>
         </nav>
     </header>
 
-    <!-- Hero -->
+    <!-- HERO SECTION -->
     <section class="hero">
-        <div class="hero-box">
-            <h2><span>Smart</span> Leave Approval<br>& Workforce Automation</h2>
+        <div class="hero-card">
+            <h2>
+                <span>Smart</span> Leave Approval<br>
+                & Workforce Automation
+            </h2>
+
             <p>
-                AutoHR automates employee leave management using intelligent workflows
-                powered by <strong>n8n</strong>. Faster approvals, zero paperwork,
-                and smarter workforce planning.
+                AutoHR automates employee leave management using intelligent
+                workflow automation powered by <strong>n8n</strong>.
+                Faster approvals, zero paperwork, and smarter workforce planning.
             </p>
+
             <a href="login.html">Launch AutoHR</a>
         </div>
     </section>
 
-    <!-- Features -->
-    <section class="features">
-        <h3>Why AutoHR?</h3>
-        <div class="cards">
-            <div class="card">
-                <h4>Workflow Automation</h4>
-                <p>End-to-end leave approval using n8n workflows.</p>
-            </div>
-            <div class="card">
-                <h4>Rule-Based Validation</h4>
-                <p>Automatically checks leave balance and policy rules.</p>
-            </div>
-            <div class="card">
-                <h4>Instant Notifications</h4>
-                <p>Email or WhatsApp alerts for approvals and rejections.</p>
-            </div>
-            <div class="card">
-                <h4>Centralized Records</h4>
-                <p>All leave data stored securely for HR reporting.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
+    <!-- FOOTER -->
     <footer>
-        © 2026 AutoHR | Smart Workforce Automation
+        © 2026 AutoHR | Smart Leave Approval & Workforce Automation System
     </footer>
 
 </body>
