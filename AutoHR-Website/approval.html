@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoHR | Manager Approval</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="assets/css/approval.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <h1 onclick="location.href='index.html'">AutoHR</h1>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="leave-status.html">Leave Status</a>
+            <a href="reports.html">Reports</a>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+
+        <h2>Manager Approval Panel</h2>
+        <p class="subtitle">Review and approve employee leave requests.</p>
+
+        <div class="request-card">
+
+            <h3>Employee: Anuj Raval</h3>
+            <p><strong>Leave Type:</strong> Casual Leave</p>
+            <p><strong>Date:</strong> 12 Jun – 14 Jun</p>
+            <p><strong>Reason:</strong> Family function</p>
+
+            <div class="actions">
+                <button class="approve" onclick="showMessage('Approved ✅')">
+                    Approve
+                </button>
+
+                <button class="reject" onclick="showMessage('Rejected ❌')">
+                    Reject
+                </button>
+            </div>
+
+            <p id="statusMsg" class="status-msg"></p>
+        </div>
+
+    </div>
+
+    <footer>
+        © 2026 AutoHR | Workforce Automation System
+    </footer>
+
+    <script>
+        function showMessage(msg){
+            document.getElementById("statusMsg").textContent = msg;
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoHR | Apply Leave</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="assets/css/apply-leave.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <h1 onclick="location.href='index.html'">AutoHR</h1>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="apply-leave.html">Apply Leave</a>
+            <a href="leave-status.html">Leave Status</a>
+            <a href="reports.html">Reports</a>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <div class="form-card">
+
+            <h2>Apply for Leave</h2>
+            <p class="subtitle">Submit your leave request for manager approval.</p>
+
+            <form id="leaveForm">
+
+                <label>Employee Name</label>
+                <input type="text" placeholder="Enter your name" required>
+
+                <label>Email</label>
+                <input type="email" placeholder="employee@company.com" required>
+
+                <label>Leave Type</label>
+                <select required>
+                    <option value="">Select Leave Type</option>
+                    <option>Casual Leave</option>
+                    <option>Sick Leave</option>
+                    <option>Earned Leave</option>
+                </select>
+
+                <label>Start Date</label>
+                <input type="date" required>
+
+                <label>End Date</label>
+                <input type="date" required>
+
+                <label>Reason</label>
+                <textarea placeholder="Enter reason for leave..." required></textarea>
+
+                <button type="submit">Submit Leave Request</button>
+
+            </form>
+
+            <p id="successMsg" class="success-msg"></p>
+
+        </div>
+    </div>
+
+    <footer>
+        © 2026 AutoHR | Workforce Automation System
+    </footer>
+
+    <!-- SIMPLE DEMO JS -->
+    <script>
+        const form = document.getElementById("leaveForm");
+        const msg = document.getElementById("successMsg");
+
+        form.addEventListener("submit", function(e){
+            e.preventDefault();
+
+            // Later → send data to n8n webhook
+            // fetch("YOUR_WEBHOOK_URL", {...})
+
+            msg.textContent = "✅ Leave request submitted successfully!";
+            form.reset();
+        });
+    </script>
+
+</body>
+</html>
