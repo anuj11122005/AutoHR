@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoHR | Reports</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="assets/css/reports.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <h1 onclick="location.href='index.html'">AutoHR</h1>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="apply-leave.html">Apply Leave</a>
+            <a href="leave-status.html">Leave Status</a>
+            <a href="reports.html">Reports</a>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+
+        <h2>Workforce Reports Dashboard</h2>
+        <p class="subtitle">Overview of employee leave statistics and trends.</p>
+
+        <!-- STAT CARDS -->
+        <div class="stats">
+            <div class="card">
+                <h3>Total Employees</h3>
+                <p>120</p>
+            </div>
+
+            <div class="card">
+                <h3>Leaves This Month</h3>
+                <p>36</p>
+            </div>
+
+            <div class="card">
+                <h3>Approved Leaves</h3>
+                <p>28</p>
+            </div>
+
+            <div class="card">
+                <h3>Pending Requests</h3>
+                <p>5</p>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-card">
+            <h3>Department-wise Leave Summary</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Total Employees</th>
+                        <th>Leaves Taken</th>
+                        <th>Pending</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Development</td>
+                        <td>40</td>
+                        <td>12</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>HR</td>
+                        <td>15</td>
+                        <td>5</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Marketing</td>
+                        <td>25</td>
+                        <td>8</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Support</td>
+                        <td>40</td>
+                        <td>11</td>
+                        <td>1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <footer>
+        © 2026 AutoHR | Workforce Automation System
+    </footer>
+
+</body>
+</html>
