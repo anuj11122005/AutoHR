@@ -1,0 +1,434 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ─── Page ──────────────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  background: #0b0d11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  color: #e8eaf2;
+  position: relative;
+  overflow: hidden;
+}
+
+.grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(79, 255, 176, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 255, 176, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.glow {
+  position: fixed;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79, 255, 176, 0.07) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* ─── Card ──────────────────────────────────────────────── */
+.card {
+  display: flex;
+  width: 900px;
+  max-width: 95vw;
+  border: 1px solid #1e2330;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Left Panel ────────────────────────────────────────── */
+.left {
+  flex: 1;
+  background: linear-gradient(145deg, #0f1520 0%, #0b1018 100%);
+  padding: 52px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  border-right: 1px solid #1e2330;
+  position: relative;
+  overflow: hidden;
+}
+
+.left::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -100px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79, 255, 176, 0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #4fffb0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brandIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.brandName {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.02em;
+  color: #e8eaf2;
+}
+
+.brandName span { color: #4fffb0; }
+
+.leftBody { flex: 1; }
+
+.leftBody h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+}
+
+.leftBody p {
+  color: #5c6278;
+  font-weight: 300;
+  line-height: 1.65;
+  font-size: 0.9rem;
+  max-width: 320px;
+}
+
+.stats {
+  display: flex;
+  gap: 28px;
+}
+
+.statVal {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #4fffb0;
+}
+
+.statLbl {
+  font-size: 0.73rem;
+  color: #5c6278;
+  margin-top: 3px;
+}
+
+/* ─── Right Panel ───────────────────────────────────────── */
+.right {
+  width: 400px;
+  flex-shrink: 0;
+  background: #13161d;
+  padding: 52px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.formEyebrow {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4fffb0;
+  margin-bottom: 8px;
+}
+
+.formTitle {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.55rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.formSub {
+  color: #5c6278;
+  font-size: 0.85rem;
+  margin-bottom: 36px;
+}
+
+/* ─── Form Fields ───────────────────────────────────────── */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field { margin-bottom: 20px; }
+
+.field label {
+  display: block;
+  font-size: 0.73rem;
+  font-weight: 500;
+  color: #5c6278;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  color: #3a3f52;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.inputWrap input {
+  width: 100%;
+  background: #0e1018;
+  border: 1px solid #1e2330;
+  border-radius: 10px;
+  padding: 12px 44px 12px 42px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #e8eaf2;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.inputWrap input::placeholder { color: #3a3f52; }
+
+.inputWrap input:focus {
+  border-color: #4fffb0;
+  box-shadow: 0 0 0 3px rgba(79, 255, 176, 0.1);
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #3a3f52;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  transition: color 0.15s;
+}
+
+.eyeBtn:hover { color: #4fffb0; }
+
+.eyeBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ─── Row (remember / forgot) ───────────────────────────── */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  margin-top: 4px;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #5c6278;
+  cursor: pointer;
+}
+
+.checkLabel input[type="checkbox"] {
+  accent-color: #4fffb0;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.forgotLink {
+  font-size: 0.82rem;
+  color: #4fffb0;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.forgotLink:hover { opacity: 1; }
+
+/* ─── Error ─────────────────────────────────────────────── */
+.error {
+  background: rgba(255, 95, 126, 0.1);
+  border: 1px solid rgba(255, 95, 126, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: #ff5f7e;
+  margin-bottom: 20px;
+  animation: shake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+/* ─── Submit Button ─────────────────────────────────────── */
+.submitBtn {
+  width: 100%;
+  height: 48px;
+  background: #4fffb0;
+  color: #0b0d11;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(79, 255, 176, 0.25);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ─── Spinner ───────────────────────────────────────────── */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(11, 13, 17, 0.25);
+  border-top-color: #0b0d11;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Sign up text ──────────────────────────────────────── */
+.signupText {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: #5c6278;
+}
+
+.signupText a {
+  color: #4fffb0;
+  text-decoration: none;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: opacity 0.15s;
+}
+
+.signupText a:hover { opacity: 1; }
+
+/* ─── Responsive ────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .left { display: none; }
+  .card { width: 100%; border-radius: 0; min-height: 100vh; }
+  .right { width: 100%; padding: 48px 28px; }
+}
+
+/* ─── Mock Hint ─────────────────────────────────────────── */
+.mockHint {
+  margin-top: 28px;
+  background: rgba(79, 255, 176, 0.05);
+  border: 1px solid rgba(79, 255, 176, 0.15);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.mockTitle {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #4fffb0;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+}
+
+.mockList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mockRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.73rem;
+  color: #5c6278;
+  flex-wrap: wrap;
+}
+
+.mockPass {
+  background: #1e2330;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: monospace;
+  color: #a0a8c0;
+  letter-spacing: 0.03em;
+}
+
+.mockRole {
+  margin-left: auto;
+  font-size: 0.68rem;
+  color: #4fffb0;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
