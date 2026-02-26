@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
 import ApplyLeave from "./pages/ApplyLeave";
 import LeaveStatus from "./pages/LeaveStatus";
 import Reports from "./pages/Reports";
@@ -10,12 +9,18 @@ import Approval from "./pages/Approval";
 import Layout from "./components/layout/Layout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
+import Dashboard from "./pages/Dashboard/DashboardRouter";
+
+import HRDashboard      from "./pages/Dashboard/HRDashboard";
+import FacultyDashboard from "./pages/Dashboard/FacultyDashboard";
+
 function App() {
   return (
     <Routes>
 
       {/* ================= PUBLIC ROUTE ================= */}
       <Route path="/" element={<Login />} />
+    
 
       {/* ================= PROTECTED ROUTES ================= */}
       <Route
