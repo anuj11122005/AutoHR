@@ -11,9 +11,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 
 import Dashboard from "./pages/Dashboard/DashboardRouter";
 
-import HRDashboard      from "./pages/Dashboard/HRDashboard";
-import FacultyDashboard from "./pages/Dashboard/FacultyDashboard";
-
 function App() {
   return (
     <Routes>
@@ -27,9 +24,7 @@ function App() {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Layout>
               <Dashboard />
-            </Layout>
           </ProtectedRoute>
         }
       />

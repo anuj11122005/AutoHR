@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 
 // ─── Mock users — replace with real API later ────────────
@@ -31,6 +32,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -38,36 +40,32 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!form.email || !form.password) {
-      setError("Please fill in all fields.");
-      return;
-    }
+  if (!form.email || !form.password) {
+    setError("Please fill in all fields.");
+    return;
+  }
 
-    setLoading(true);
-    setError("");
+  setLoading(true);
 
-    // Simulate network delay
-    await new Promise((r) => setTimeout(r, 900));
+  await new Promise((r) => setTimeout(r, 900));
 
-    const user = MOCK_USERS.find(
-      (u) => u.email === form.email && u.password === form.password
-    );
+  const user = MOCK_USERS.find(
+    (u) => u.email === form.email && u.password === form.password
+  );
 
-    if (!user) {
-      setError("Invalid email or password. Please try again.");
-      setLoading(false);
-      return;
-    }
+  if (!user) {
+    setError("Invalid email or password.");
+    setLoading(false);
+    return;
+  }
 
-    // ✅ Save mock session
-    localStorage.setItem("token", `mock-token-${user.id}`);
-    localStorage.setItem("user", JSON.stringify({ id: user.id, name: user.name, role: user.role, email: user.email }));
+  localStorage.setItem("token", `mock-token-${user.id}`);
+  localStorage.setItem("user", JSON.stringify(user));
 
-    // ✅ Redirect — swap for navigate("/dashboard") if using React Router
-    window.location.href = "/dashboard";
-  };
+  navigate("/dashboard");   // ✅ correct way
+};
 
   return (
     <div className={styles.page}>
