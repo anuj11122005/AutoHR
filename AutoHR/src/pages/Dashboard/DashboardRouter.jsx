@@ -1,19 +1,18 @@
 // src/pages/Dashboard/index.jsx
-// Drop this as the /dashboard route — it reads the saved role
-// and renders the correct dashboard automatically.
+// Reads role from localStorage and renders the correct dashboard
 
-import HRDashboard      from "./HRDashboard";
-import FacultyDashboard from "./FacultyDashboard";
+import HRDashboard       from "./HRDashboard";
+import EmployeeDashboard from "./EmployeeDashboard";
 
 export default function Dashboard() {
   const raw  = localStorage.getItem("user");
   const user = raw ? JSON.parse(raw) : null;
   const role = user?.role || "";
 
-  if (role === "HR Manager") return <HRDashboard />;
-  if (role === "Employee")    return <FacultyDashboard />;
+  if (role === "HR Manager" || role === "Admin") return <HRDashboard />;
+  if (role === "Employee"   || role === "Faculty") return <EmployeeDashboard />;
 
-  // Fallback — not logged in or unknown role
-//   window.location.href = "/login";
-  return <HRDashboard />;
+  // Not logged in — redirect to login
+  // window.location.href = "/login";
+  return null;
 }
