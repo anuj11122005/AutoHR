@@ -1,0 +1,68 @@
+{
+  "name": "Auth - JWT Verifier (Sub-workflow)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = $input.item.json.token;\nconst secret = $env.JWT_SECRET || 'supersecret';\n\n// MOCK JWT Validation (Replace with real Crypto/JWT Node or npm jsonwebtoken if enabled)\nif (jwt === 'mock-jwt-token-123') {\n  return [{ json: { valid: true, user: { id: 1, role: 'Employee', email: 'employee@autohr.com' } } }];\n} else if (jwt === 'mock-hr-token') {\n  return [{ json: { valid: true, user: { id: 2, role: 'HR', email: 'hr@autohr.com' } } }];\n} else if (jwt === 'mock-admin-token') {\n  return [{ json: { valid: true, user: { id: 3, role: 'Admin', email: 'admin@autohr.com' } } }];\n}\n\nreturn [{ json: { valid: false, error: 'Unauthorized' } }];"
+      },
+      "id": "2",
+      "name": "Verify Token (Code)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.valid}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "If Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Verify Token (Code)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Token (Code)": {
+      "main": [
+        [
+          {
+            "node": "If Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "name": "Dashboard Metrics - AutoHR",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "dashboard/metrics",
+        "httpMethod": "GET",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook - Dashboard Metrics",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const authHeader = $input.item.json.headers?.authorization || '';\nconst token = authHeader.replace('Bearer ', '');\n\nif (token === 'mock-jwt-token-123') {\n  return [{ json: { valid: true, user: { id: 1, role: 'Employee', email: 'employee@autohr.com' } } }];\n} else if (token === 'mock-hr-token') {\n  return [{ json: { valid: true, user: { id: 2, role: 'HR', email: 'hr@autohr.com' } } }];\n} else if (token === 'mock-admin-token') {\n  return [{ json: { valid: true, user: { id: 3, role: 'Admin', email: 'admin@autohr.com' } } }];\n}\n\nreturn [{ json: { valid: false } }];"
+      },
+      "id": "2",
+      "name": "Verify Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.valid}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Check Auth",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const role = $node[\"Verify Token\"].json[\"user\"][\"role\"];\n\nif (role === 'Employee') {\n  return [{ json: { success: true, stats: { available: 12, used: 6, pending: 1, approved: 5 } } }];\n} else if (role === 'HR') {\n  return [{ json: { success: true, stats: { employees: 85, pendingApp: 14, leavesThisMonth: 32 } } }];\n} else {\n  return [{ json: { success: true, stats: { teamMembers: 12, pendingApp: 4, approved: 9 } } }];\n}"
+      },
+      "id": "4",
+      "name": "Generate Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify($json)}}",
+        "options": {}
+      },
+      "id": "5",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"message\": \"Unauthorized\"\n}",
+        "options": { "responseCode": 401 }
+      },
+      "id": "6",
+      "name": "Unauthorized Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - Dashboard Metrics": {
+      "main": [[{ "node": "Verify Token", "type": "main", "index": 0 }]]
+    },
+    "Verify Token": {
+      "main": [[{ "node": "Check Auth", "type": "main", "index": 0 }]]
+    },
+    "Check Auth": {
+      "main": [
+        [{ "node": "Generate Metrics", "type": "main", "index": 0 }],
+        [{ "node": "Unauthorized Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Generate Metrics": {
+      "main": [[{ "node": "Success Response", "type": "main", "index": 0 }]]
+    }
+  }
+}

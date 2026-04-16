@@ -1,0 +1,113 @@
+{
+  "name": "Login & Auth - AutoHR",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "auth/login",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook - Login",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const email = $input.item.json.body.email;\nconst password = $input.item.json.body.password;\n\n// Mocking DB response for template purposes:\nif (email === 'admin@autohr.com' && password === 'admin123') {\n  return [{ json: { success: true, token: 'mock-admin-token', user: { role: 'Admin', email: email } } }];\n}\nif (email === 'hr@autohr.com' && password === 'hr1234') {\n  return [{ json: { success: true, token: 'mock-hr-token', user: { role: 'HR', email: email } } }];\n}\nif (email === 'employee@autohr.com' && password === 'emp123') {\n  return [{ json: { success: true, token: 'mock-jwt-token-123', user: { role: 'Employee', email: email } } }];\n}\n\nreturn [{ json: { success: false, message: 'Invalid credentials' } }];"
+      },
+      "id": "2",
+      "name": "Generate Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.success}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Check Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify($json)}}",
+        "options": {}
+      },
+      "id": "4",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify($json)}}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "5",
+      "name": "Unauthorized Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - Login": {
+      "main": [
+        [
+          {
+            "node": "Generate Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Token": {
+      "main": [
+        [
+          {
+            "node": "Check Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Success": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unauthorized Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

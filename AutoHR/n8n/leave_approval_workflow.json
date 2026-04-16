@@ -1,0 +1,120 @@
+{
+  "name": "Leave Approval - AutoHR",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "leave/approve",
+        "httpMethod": "PUT",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook - Approve Leave",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const authHeader = $input.item.json.headers?.authorization || '';\nconst token = authHeader.replace('Bearer ', '');\n\nif (token === 'mock-jwt-token-123') {\n  return [{ json: { valid: true, user: { id: 1, role: 'Employee', email: 'employee@autohr.com' } } }];\n} else if (token === 'mock-hr-token') {\n  return [{ json: { valid: true, user: { id: 2, role: 'HR', email: 'hr@autohr.com' } } }];\n} else if (token === 'mock-admin-token') {\n  return [{ json: { valid: true, user: { id: 3, role: 'Admin', email: 'admin@autohr.com' } } }];\n}\n\nreturn [{ json: { valid: false } }];"
+      },
+      "id": "2",
+      "name": "Verify Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.valid}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Check Auth",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node[\"Verify Token\"].json[\"user\"][\"role\"]}}",
+              "operation": "notEqual",
+              "value2": "Employee"
+            }
+          ]
+        }
+      },
+      "id": "4",
+      "name": "Check Role",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { success: true, message: 'Leave status updated successfully!' } }];"
+      },
+      "id": "5",
+      "name": "Update Status (Mock)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1050, 150]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify($json)}}",
+        "options": {}
+      },
+      "id": "6",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 150]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"message\": \"Unauthorized or Invalid Role\"\n}",
+        "options": { "responseCode": 403 }
+      },
+      "id": "7",
+      "name": "Forbidden Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 420]
+    }
+  ],
+  "connections": {
+    "Webhook - Approve Leave": {
+      "main": [[{ "node": "Verify Token", "type": "main", "index": 0 }]]
+    },
+    "Verify Token": {
+      "main": [[{ "node": "Check Auth", "type": "main", "index": 0 }]]
+    },
+    "Check Auth": {
+      "main": [
+        [{ "node": "Check Role", "type": "main", "index": 0 }],
+        [{ "node": "Forbidden Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Role": {
+      "main": [
+        [{ "node": "Update Status (Mock)", "type": "main", "index": 0 }],
+        [{ "node": "Forbidden Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Update Status (Mock)": {
+      "main": [[{ "node": "Success Response", "type": "main", "index": 0 }]]
+    }
+  }
+}

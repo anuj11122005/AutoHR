@@ -47,13 +47,13 @@ function Dashboard() {
     >
       {/* ================= TITLE ================= */}
 
-      <h1 className="dashboard-title">
+      <h1 className="dashboard-title" style={{ color: 'var(--text-main)', marginBottom: '1rem' }}>
         {role} Dashboard 🚀
       </h1>
 
       {/* ================= STATS GRID ================= */}
 
-      <div className="stats-grid">
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px', marginTop: '1.5rem' }}>
 
         {role === "Employee" && (
           <>
@@ -86,8 +86,8 @@ function Dashboard() {
 
       {/* ================= CHART SECTION ================= */}
 
-      <div className="chart-card">
-        <h3 className="chart-title">
+      <div className="glass-card" style={{ marginTop: '2rem' }}>
+        <h3 className="chart-title" style={{ marginBottom: '1.5rem', color: 'var(--text-main)', fontSize: '1.25rem' }}>
           {role === "Employee"
             ? "Your Leave Usage (2026)"
             : "Organization Leave Analytics"}
@@ -129,7 +129,8 @@ function Dashboard() {
 function StatCard({ title, value }) {
   return (
     <motion.div
-      className="stat-card"
+      className="stat-card glass-card"
+      style={{ padding: '24px', textAlign: 'center' }}
       whileHover={{ scale: 1.05 }}
       transition={{ type: "spring", stiffness: 200 }}
     >

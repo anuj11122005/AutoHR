@@ -2,30 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 
-// ─── Mock users — replace with real API later ────────────
-const MOCK_USERS = [
-  {
-    id: 1,
-    email: "admin@autohr.com",
-    password: "admin123",
-    name: "Alex Johnson",
-    role: "Admin",
-  },
-  {
-    id: 2,
-    email: "hr@autohr.com",
-    password: "hr1234",
-    name: "Sara Williams",
-    role: "HR Manager",
-  },
-  {
-    id: 3,
-    email: "employee@autohr.com",
-    password: "emp123",
-    name: "John Smith",
-    role: "Employee",
-  },
-];
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -33,6 +10,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -40,32 +18,25 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!form.email || !form.password) {
-    setError("Please fill in all fields.");
-    return;
-  }
+    if (!form.email || !form.password) {
+      setError("Please fill in all fields.");
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  await new Promise((r) => setTimeout(r, 900));
+    const result = await login({ email: form.email, password: form.password });
 
-  const user = MOCK_USERS.find(
-    (u) => u.email === form.email && u.password === form.password
-  );
+    if (!result.success) {
+      setError(result.message);
+      setLoading(false);
+      return;
+    }
 
-  if (!user) {
-    setError("Invalid email or password.");
-    setLoading(false);
-    return;
-  }
-
-  localStorage.setItem("token", `mock-token-${user.id}`);
-  localStorage.setItem("user", JSON.stringify(user));
-
-  navigate("/dashboard");   // ✅ correct way
-};
+    navigate("/dashboard");
+  };
 
   return (
     <div className={styles.page}>

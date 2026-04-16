@@ -1,57 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import s from "./Dashboard.module.css";
 import ls from "./LeaveManagement.module.css";
+import { api } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 
 // ═══════════════════════════════════════════════════════════
-// n8n API LAYER
-// When your n8n backend is ready, uncomment the fetch calls
-// and set VITE_N8N_BASE_URL in your .env file
-// ═══════════════════════════════════════════════════════════
-const N8N_BASE = import.meta.env.VITE_N8N_BASE_URL || "https://your-n8n-instance.com/webhook";
-
-const api = {
-  async addEmployee(payload) {
-    // ── UNCOMMENT when n8n is ready ──
-    // const res = await fetch(`${N8N_BASE}/add-employee`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(payload),
-    // });
-    // return res.json();
-
-    await new Promise(r => setTimeout(r, 900)); // mock delay
-    return { success: true, id: Date.now(), ...payload };
-  },
-
-  async postJob(payload) {
-    // ── UNCOMMENT when n8n is ready ──
-    // const res = await fetch(`${N8N_BASE}/post-job`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(payload),
-    // });
-    // return res.json();
-
-    await new Promise(r => setTimeout(r, 900));
-    return { success: true, id: Date.now(), ...payload };
-  },
-
-  async updateLeave(id, status) {
-    // ── UNCOMMENT when n8n is ready ──
-    // const res = await fetch(`${N8N_BASE}/update-leave`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ id, status }),
-    // });
-    // return res.json();
-
-    await new Promise(r => setTimeout(r, 400));
-    return { success: true };
-  },
-};
-
-// ═══════════════════════════════════════════════════════════
-// MOCK DATA
+// MOCK DATA (Fallback if API is empty)
 // ═══════════════════════════════════════════════════════════
 const INITIAL_EMPLOYEES = [
   { id: 1, name: "Alex Johnson", dept: "Engineering", status: "Active",   salary: "₹82,000", joined: "Jan 2022", color: "#4fffb0" },
@@ -310,7 +264,7 @@ function AddEmployeeModal({ open, onClose, onAdd, showToast }) {
       // Format date for display
       const d = new Date(form.joined);
       const joinedDisplay = `${d.toLocaleString("default",{month:"short"})} ${d.getFullYear()}`;
-      onAdd({ ...form, id: result.id, color, joined: joinedDisplay });
+      onAdd({ ...form, id: result.id || Date.now(), color, joined: joinedDisplay });
       showToast(`${form.name} added successfully!`, "green");
       setForm(EMPTY_EMP);
       setErrors({});
@@ -393,7 +347,7 @@ function PostJobModal({ open, onClose, onAdd, showToast }) {
       const result = await api.postJob(form);
       const now = new Date();
       const posted = `${now.toLocaleString("default",{month:"short"})} ${now.getDate()}`;
-      onAdd({ ...form, id: result.id, applicants: 0, posted });
+      onAdd({ ...form, id: result.id || Date.now(), applicants: 0, posted });
       showToast(`"${form.title}" posted successfully!`, "green");
       setForm(EMPTY_JOB);
       setErrors({});
@@ -493,15 +447,15 @@ function LeaveDetailModal({ selected, onClose, onUpdate }) {
 // ═══════════════════════════════════════════════════════════
 
 // ── Dashboard ─────────────────────────────────────────────
-function DashboardPage({ onNavigate, employees, leaveRequests, jobs }) {
+function DashboardPage({ onNavigate, employees, leaveRequests, jobs, stats }) {
   return (
     <>
       <div className={s.statsGrid}>
         {[
-          { label:"Total Employees", value:employees.length, change:"+12", trend:"up", color:"green", icon:"users" },
-          { label:"Open Positions",  value:jobs.filter(j=>j.status==="Active").length, change:"+3", trend:"up", color:"blue", icon:"briefcase" },
-          { label:"On Leave Today",  value:employees.filter(e=>e.status==="On Leave").length, change:"-2", trend:"down", color:"orange", icon:"calendar" },
-          { label:"Pending Leaves",  value:leaveRequests.filter(r=>r.status==="Pending").length, change:"new", trend:"neutral", color:"red", icon:"clock" },
+          { label:"Total Employees", value:stats.employees || employees.length, change:"+12", trend:"up", color:"green", icon:"users" },
+          { label:"Open Positions",  value:stats.openPositions || jobs.filter(j=>j.status==="Active").length, change:"+3", trend:"up", color:"blue", icon:"briefcase" },
+          { label:"On Leave Today",  value:stats.onLeaveToday || employees.filter(e=>e.status==="On Leave").length, change:"-2", trend:"down", color:"orange", icon:"calendar" },
+          { label:"Pending Leaves",  value:stats.pendingLeaves || leaveRequests.filter(r=>r.status==="Pending").length, change:"new", trend:"neutral", color:"red", icon:"clock" },
         ].map(st => <StatCard key={st.label} {...st}/>)}
       </div>
 
@@ -620,13 +574,12 @@ function EmployeesPage({ employees, onAdd }) {
       <Toast toast={toast}/>
       <AddEmployeeModal open={showModal} onClose={()=>setModal(false)} onAdd={onAdd} showToast={showToast}/>
 
-      {/* Spin keyframe injected once */}
       <style>{`@keyframes hrSpin { to { transform: rotate(360deg); } }`}</style>
 
       <div className={s.statsGrid}>
         {[
           { label:"Total Employees", value:employees.length, change:"+12", trend:"up",      color:"green",  icon:"users" },
-          { label:"Active",          value:employees.filter(e=>e.status==="Active").length, change:`${Math.round(employees.filter(e=>e.status==="Active").length/employees.length*100)}%`, trend:"up", color:"blue", icon:"check" },
+          { label:"Active",          value:employees.filter(e=>e.status==="Active").length, change:`${employees.length ? Math.round(employees.filter(e=>e.status==="Active").length/employees.length*100) : 0}%`, trend:"up", color:"blue", icon:"check" },
           { label:"On Leave",        value:employees.filter(e=>e.status==="On Leave").length, change:"today", trend:"neutral", color:"orange", icon:"calendar" },
           { label:"Inactive",        value:employees.filter(e=>e.status==="Inactive").length, change:"-1", trend:"up", color:"red", icon:"x" },
         ].map(st=><StatCard key={st.label} {...st}/>)}
@@ -744,7 +697,7 @@ function LeavePage({ leaveRequests, onUpdateLeave }) {
 
   const handleUpdate = async (id, newStatus) => {
     try {
-      await api.updateLeave(id, newStatus);
+      await api.updateLeaveStatus(id, newStatus);
       onUpdateLeave(id, newStatus);
       setSelected(prev=>prev?{...prev,status:newStatus}:null);
       showToast(newStatus==="Approved"?"Leave request approved.":"Leave request rejected.", newStatus==="Approved"?"green":"red");
@@ -837,6 +790,34 @@ function LeavePage({ leaveRequests, onUpdateLeave }) {
 
 // ── Payroll ───────────────────────────────────────────────
 function PayrollPage() {
+  const handleExport = () => {
+    const headers = ["Employee", "Department", "Basic", "HRA", "Deductions", "Net Pay", "Status"];
+    const rows = PAYROLL_DATA.map(emp => [
+      emp.name,
+      emp.dept,
+      emp.basic.replace(/[₹,]/g, ""),
+      emp.hra.replace(/[₹,]/g, ""),
+      emp.deductions.replace(/[₹,]/g, ""),
+      emp.net.replace(/[₹,]/g, ""),
+      emp.status
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(r => r.join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Payroll_Report_Feb_2026.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <>
       <div className={s.statsGrid}>
@@ -850,7 +831,10 @@ function PayrollPage() {
       <div className={s.panel}>
         <div className={s.panelHead}>
           <span className={s.panelTitle}>February 2026 Payroll</span>
-          <button style={{display:"flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:9,border:"1px solid var(--border)",background:"var(--surface2)",color:"var(--text)",fontFamily:"'DM Sans',sans-serif",fontSize:"0.82rem",cursor:"pointer"}}>
+          <button 
+            onClick={handleExport}
+            style={{display:"flex",alignItems:"center",gap:6,padding:"7px 14px",borderRadius:9,border:"1px solid var(--border)",background:"var(--surface2)",color:"var(--text)",fontFamily:"'DM Sans',sans-serif",fontSize:"0.82rem",cursor:"pointer"}}
+          >
             <Icon name="download" size={14}/> Export
           </button>
         </div>
@@ -887,6 +871,17 @@ function ReportsPage() {
     { title:"Recruitment Pipeline",       desc:"Applicants, interviews, offers",     date:"Feb 20, 2026", type:"Recruit",    size:"178 KB" },
   ];
   const tc = { HR:"green", Attendance:"blue", Leave:"orange", Payroll:"red", Recruit:"muted" };
+
+  const handleDownload = (r) => {
+    const csvContent = `Report,${r.title}\nType,${r.type}\nDate,${r.date}\nSize,${r.size}`;
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${r.title.replace(/\s+/g, "_")}.csv`);
+    link.click();
+  };
+
   return (
     <>
       <div className={s.statsGrid}>
@@ -900,7 +895,10 @@ function ReportsPage() {
       <div className={s.panel}>
         <div className={s.panelHead}>
           <span className={s.panelTitle}>Recent Reports</span>
-          <button style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",borderRadius:9,border:"none",background:"var(--accent)",color:"#0b0d11",fontFamily:"'Syne',sans-serif",fontWeight:700,fontSize:"0.82rem",cursor:"pointer"}}>
+          <button 
+            onClick={() => alert("Report generation started...")}
+            style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",borderRadius:9,border:"none",background:"var(--accent)",color:"#0b0d11",fontFamily:"'Syne',sans-serif",fontWeight:700,fontSize:"0.82rem",cursor:"pointer"}}
+          >
             <Icon name="plus" size={14}/> Generate Report
           </button>
         </div>
@@ -914,7 +912,15 @@ function ReportsPage() {
                   <td><span className={`${s.badge} ${s[tc[r.type]]}`}>{r.type}</span></td>
                   <td style={{color:"var(--muted)",fontSize:"0.78rem"}}>{r.date}</td>
                   <td style={{color:"var(--muted2)",fontSize:"0.78rem"}}>{r.size}</td>
-                  <td><button className={ls.viewBtn} title="Download"><Icon name="download" size={14}/></button></td>
+                  <td>
+                    <button 
+                      className={ls.viewBtn} 
+                      title="Download"
+                      onClick={() => handleDownload(r)}
+                    >
+                      <Icon name="download" size={14}/>
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -929,14 +935,34 @@ function ReportsPage() {
 // ROOT COMPONENT — shared state lives here
 // ═══════════════════════════════════════════════════════════
 export default function HRDashboard() {
+  const { logout } = useAuth();
   const [activeNav, setActiveNav]  = useState("dashboard");
   const [employees, setEmployees]  = useState(INITIAL_EMPLOYEES);
   const [jobs, setJobs]            = useState(INITIAL_JOBS);
   const [leaves, setLeaves]        = useState(INITIAL_LEAVES);
+  const [dashboardStats, setStats] = useState({});
+
+  useEffect(() => {
+    // Initial data load from n8n
+    const loadData = async () => {
+      try {
+        const [leavesData, statsData] = await Promise.all([
+          api.getLeaves(),
+          api.getDashboardMetrics()
+        ]);
+        
+        if (leavesData?.leaves) setLeaves(leavesData.leaves);
+        if (statsData?.stats) setStats(statsData.stats);
+      } catch (err) {
+        console.warn("Failed to fetch live data for HR Dashboard", err);
+      }
+    };
+    loadData();
+  }, []);
 
   const addEmployee = emp    => setEmployees(prev => [emp, ...prev]);
   const addJob      = job    => setJobs(prev => [job, ...prev]);
-  const updateLeave = (id,st)=> setLeaves(prev => prev.map(r => r.id===id ? {...r,status:st} : r));
+  const updateLocalLeave = (id,st)=> setLeaves(prev => prev.map(r => r.id===id ? {...r,status:st} : r));
 
   const pendingLeaves = leaves.filter(r => r.status==="Pending").length;
   const activeJobs    = jobs.filter(j => j.status==="Active").length;
@@ -952,13 +978,13 @@ export default function HRDashboard() {
 
   const renderPage = () => {
     switch (activeNav) {
-      case "dashboard": return <DashboardPage onNavigate={setActiveNav} employees={employees} leaveRequests={leaves} jobs={jobs}/>;
+      case "dashboard": return <DashboardPage onNavigate={setActiveNav} employees={employees} leaveRequests={leaves} jobs={jobs} stats={dashboardStats}/>;
       case "employees": return <EmployeesPage employees={employees} onAdd={addEmployee}/>;
       case "recruit":   return <RecruitmentPage jobs={jobs} onAddJob={addJob}/>;
-      case "leave":     return <LeavePage leaveRequests={leaves} onUpdateLeave={updateLeave}/>;
+      case "leave":     return <LeavePage leaveRequests={leaves} onUpdateLeave={updateLocalLeave}/>;
       case "payroll":   return <PayrollPage/>;
       case "reports":   return <ReportsPage/>;
-      default:          return <DashboardPage onNavigate={setActiveNav} employees={employees} leaveRequests={leaves} jobs={jobs}/>;
+      default:          return <DashboardPage onNavigate={setActiveNav} employees={employees} leaveRequests={leaves} jobs={jobs} stats={dashboardStats}/>;
     }
   };
 
@@ -991,7 +1017,7 @@ export default function HRDashboard() {
               <div className={s.userName}>Sara Williams</div>
               <div className={s.userRole}>HR Manager</div>
             </div>
-            <button className={s.logoutBtn} onClick={()=>{localStorage.clear();window.location.href="/login";}} title="Logout">
+            <button className={s.logoutBtn} onClick={logout} title="Logout">
               <Icon name="logout"/>
             </button>
           </div>
@@ -1006,8 +1032,8 @@ export default function HRDashboard() {
           </div>
           <div className={s.topbarRight}>
             <span className={s.rolePill}>HR Manager</span>
-            <div className={s.iconBtn}><Icon name="search"/></div>
-            <div className={s.iconBtn}><Icon name="bell"/><span className={s.notifDot}/></div>
+            <div className={s.iconBtn} onClick={() => alert("Search feature coming soon!")}><Icon name="search"/></div>
+            <div className={s.iconBtn} onClick={() => alert("No new notifications")}><Icon name="bell"/><span className={s.notifDot}/></div>
           </div>
         </header>
         <div className={s.content} key={activeNav}>

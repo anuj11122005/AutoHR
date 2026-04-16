@@ -1,0 +1,96 @@
+{
+  "name": "Leave Status - AutoHR",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "leave/status",
+        "httpMethod": "GET",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook - Leave Status",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const authHeader = $input.item.json.headers?.authorization || '';\nconst token = authHeader.replace('Bearer ', '');\n\nif (token === 'mock-jwt-token-123') {\n  return [{ json: { valid: true, user: { id: 1, role: 'Employee', email: 'employee@autohr.com' } } }];\n} else if (token === 'mock-hr-token') {\n  return [{ json: { valid: true, user: { id: 2, role: 'HR', email: 'hr@autohr.com' } } }];\n} else if (token === 'mock-admin-token') {\n  return [{ json: { valid: true, user: { id: 3, role: 'Admin', email: 'admin@autohr.com' } } }];\n}\n\nreturn [{ json: { valid: false } }];"
+      },
+      "id": "2",
+      "name": "Verify Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.valid}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "Check Auth",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { \n  success: true, \n  leaves: [\n    { id: 1, type: 'Sick Leave', startDate: '2026-05-10', endDate: '2026-05-12', status: 'Pending', reason: 'Fever and throat infection' },\n    { id: 2, type: 'Casual Leave', startDate: '2026-01-05', endDate: '2026-01-08', status: 'Approved', reason: 'Personal work' },\n    { id: 3, type: 'Paid Time Off', startDate: '2026-03-20', endDate: '2026-03-22', status: 'Rejected', reason: 'Family event' },\n    { id: 4, type: 'Sick Leave', startDate: '2026-04-01', endDate: '2026-04-02', status: 'Approved', reason: 'Medical appointment' },\n    { id: 5, type: 'Casual Leave', startDate: '2026-04-15', endDate: '2026-04-15', status: 'Pending', reason: 'Bank work' }\n  ]\n} }];"
+      },
+      "id": "4",
+      "name": "Fetch Leaves (Mock)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify($json)}}",
+        "options": {}
+      },
+      "id": "5",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"message\": \"Unauthorized\"\n}",
+        "options": { "responseCode": 401 }
+      },
+      "id": "6",
+      "name": "Unauthorized Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - Leave Status": {
+      "main": [[{ "node": "Verify Token", "type": "main", "index": 0 }]]
+    },
+    "Verify Token": {
+      "main": [[{ "node": "Check Auth", "type": "main", "index": 0 }]]
+    },
+    "Check Auth": {
+      "main": [
+        [{ "node": "Fetch Leaves (Mock)", "type": "main", "index": 0 }],
+        [{ "node": "Unauthorized Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Leaves (Mock)": {
+      "main": [[{ "node": "Success Response", "type": "main", "index": 0 }]]
+    }
+  }
+}
